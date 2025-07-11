@@ -77,6 +77,15 @@ const FairDetailScreen = ({ route, navigation }) => {
     </View>
   );
 
+  // Función para formatear fecha DD-MM-YYYY
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: fair.image }} style={styles.headerImage} />
@@ -84,60 +93,30 @@ const FairDetailScreen = ({ route, navigation }) => {
       <View style={styles.content}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>{fair.name}</Text>
-          <TouchableOpacity style={styles.favoriteButton}>
-            <Icon name="favorite-border" size={24} color="#4CAF50" />
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.ratingSection}>
-          {renderStars(fair.rating)}
-          <Text style={styles.ratingText}>
-            {fair.rating} ({fair.reviews} reseñas)
-          </Text>
         </View>
         
         <Text style={styles.description}>{fair.description}</Text>
         
         <View style={styles.infoSection}>
           <View style={styles.infoItem}>
-            <Icon name="schedule" size={20} color="#4CAF50" />
-            <Text style={styles.infoText}>{fair.schedule}</Text>
+            <Icon name="location-on" size={20} color="#4CAF50" />
+            <Text style={styles.infoText}>{fair.address}</Text>
           </View>
           <View style={styles.infoItem}>
-            <Icon name="location-on" size={20} color="#4CAF50" />
-            <Text style={styles.infoText}>{fair.location}</Text>
+            <Icon name="calendar-today" size={20} color="#4CAF50" />
+            <Text style={styles.infoText}>Inicio: {formatDate(fair.startDate)}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Icon name="calendar-today" size={20} color="#4CAF50" />
+            <Text style={styles.infoText}>Término: {formatDate(fair.endDate)}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Icon name="place" size={20} color="#4CAF50" />
+            <Text style={styles.infoText}>Lat: {fair.latitude} | Lng: {fair.longitude}</Text>
           </View>
         </View>
         
-        <View style={styles.actionsSection}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="directions" size={20} color="white" />
-            <Text style={styles.actionButtonText}>Cómo llegar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButtonSecondary}>
-            <Icon name="share" size={20} color="#4CAF50" />
-            <Text style={styles.actionButtonSecondaryText}>Compartir</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.ratingInputSection}>
-          <Text style={styles.sectionTitle}>Califica esta feria</Text>
-          {renderStars(userRating, setUserRating)}
-          
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Escribe tu comentario..."
-            value={newComment}
-            onChangeText={setNewComment}
-            multiline
-            numberOfLines={3}
-          />
-          
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>Enviar Reseña</Text>
-          </TouchableOpacity>
-        </View>
-        
+        {/* Puedes dejar la sección de comentarios si lo deseas */}
         <View style={styles.commentsSection}>
           <Text style={styles.sectionTitle}>
             Reseñas ({comments.length})

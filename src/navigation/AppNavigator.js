@@ -33,6 +33,7 @@ export default function AppNavigator() {
         </>
       )}
       <Stack.Screen name="AddFairScreen" component={AddFairScreen} />
+      <Stack.Screen name="FairDetail" component={FairDetailScreen} />
     </Stack.Navigator>
   );
 }

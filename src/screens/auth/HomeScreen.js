@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
         renderItem={renderFairCard}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
       />
     </SafeAreaView>
   );
