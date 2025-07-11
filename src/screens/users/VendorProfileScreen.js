@@ -16,26 +16,14 @@ const VendorProfileScreen = ({ navigation }) => {
   
   const [vendorData] = useState({
     name: 'Jimena Zandria',
-    username: '@jimenazandria2031',
+    username: 'jimenazandria2031',
+    rut: '12345678-9',
+    birthday: '1990-05-15',
+    email: 'jimena@email.com',
+    phoneNumber: '+56912345678',
     avatar: 'https://via.placeholder.com/100x100',
-    publications: [
-      {
-        id: 1,
-        image: 'https://via.placeholder.com/300x200',
-        description: 'Lista con los vinos tintos para esta fin de semana para el evento.',
-        likes: 245,
-        comments: 4,
-        date: '2 días atrás'
-      },
-      {
-        id: 2,
-        image: 'https://via.placeholder.com/300x200',
-        description: 'Nuevos productos frescos disponibles en nuestra feria.',
-        likes: 189,
-        comments: 7,
-        date: '1 semana atrás'
-      }
-    ]
+    // Puedes agregar más campos reales del backend aquí
+    fairs: [], // Si tienes ferias favoritas o propias
   });
 
   const renderPublication = ({ item }) => (
@@ -92,7 +80,11 @@ const VendorProfileScreen = ({ navigation }) => {
         <View style={styles.profileSection}>
           <Image source={{ uri: vendorData.avatar }} style={styles.profileAvatar} />
           <Text style={styles.profileName}>{vendorData.name}</Text>
-          
+          <Text style={styles.profileField}>Usuario: {vendorData.username}</Text>
+          <Text style={styles.profileField}>RUT: {vendorData.rut}</Text>
+          <Text style={styles.profileField}>Fecha de nacimiento: {vendorData.birthday}</Text>
+          <Text style={styles.profileField}>Email: {vendorData.email}</Text>
+          <Text style={styles.profileField}>Teléfono: {vendorData.phoneNumber}</Text>
           <TouchableOpacity 
             style={styles.editProfileButton}
             onPress={() => navigation.navigate('EditVendorProfile')}
@@ -100,78 +92,25 @@ const VendorProfileScreen = ({ navigation }) => {
             <Text style={styles.editProfileText}>Editar perfil</Text>
           </TouchableOpacity>
         </View>
-
         <View style={styles.statsSection}>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>12</Text>
+            <Text style={styles.statNumber}>{vendorData.fairs.length}</Text>
             <Text style={styles.statLabel}>Ferias</Text>
           </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>245</Text>
-            <Text style={styles.statLabel}>Seguidores</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>4.8</Text>
-            <Text style={styles.statLabel}>Rating</Text>
-          </View>
         </View>
-
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              activeTab === 'publications' && styles.activeTab
-            ]}
-            onPress={() => setActiveTab('publications')}
-          >
-            <Text style={[
-              styles.tabText,
-              activeTab === 'publications' && styles.activeTabText
-            ]}>
-              Publicaciones
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              activeTab === 'fairs' && styles.activeTab
-            ]}
-            onPress={() => setActiveTab('fairs')}
-          >
-            <Text style={[
-              styles.tabText,
-              activeTab === 'fairs' && styles.activeTabText
-            ]}>
-              Mis Ferias
-            </Text>
-          </TouchableOpacity>
+        {/* Puedes dejar la sección de ferias, pero si no hay datos muestra un mensaje */}
+        <View style={styles.fairsSection}>
+          {vendorData.fairs.length === 0 ? (
+            <Text style={styles.emptyText}>Aquí aparecerán tus ferias registradas</Text>
+          ) : (
+            // Aquí podrías mapear las ferias si las tienes
+            vendorData.fairs.map(fair => (
+              <View key={fair.id} style={styles.fairCard}>
+                <Text>{fair.name}</Text>
+              </View>
+            ))
+          )}
         </View>
-
-        {activeTab === 'publications' && (
-          <FlatList
-            data={vendorData.publications}
-            renderItem={renderPublication}
-            keyExtractor={(item) => item.id.toString()}
-            scrollEnabled={false}
-            contentContainerStyle={styles.publicationsList}
-          />
-        )}
-
-        {activeTab === 'fairs' && (
-          <View style={styles.fairsSection}>
-            <TouchableOpacity 
-              style={styles.addFairButton}
-              onPress={() => navigation.navigate('AddFair')}
-            >
-              <Icon name="add" size={24} color="white" />
-              <Text style={styles.addFairText}>Agregar Nueva Feria</Text>
-            </TouchableOpacity>
-            
-            <Text style={styles.emptyText}>
-              Aquí aparecerán tus ferias registradas
-            </Text>
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -231,6 +170,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
+  },
+  profileField: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
   },
   statsSection: {
     flexDirection: 'row',
@@ -360,6 +304,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 40,
+  },
+  fairCard: {
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
   },
 });
 

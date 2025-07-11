@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Location from 'expo-location';
 
 const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState({
@@ -58,6 +59,15 @@ const MapScreen = ({ navigation }) => {
     setModalVisible(true);
   };
 
+  // Función para formatear fecha DD-MM-YYYY
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   const renderFairModal = () => (
     <Modal
       animationType="slide"
@@ -73,47 +83,19 @@ const MapScreen = ({ navigation }) => {
           >
             <Icon name="close" size={24} color="#666" />
           </TouchableOpacity>
-          
           {selectedFair && (
             <ScrollView>
               <Image 
                 source={{ uri: selectedFair.image }} 
                 style={styles.modalImage} 
               />
-              
               <View style={styles.modalInfo}>
                 <Text style={styles.modalTitle}>{selectedFair.name}</Text>
-                
-                <View style={styles.ratingContainer}>
-                  <View style={styles.stars}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Icon
-                        key={star}
-                        name="star"
-                        size={16}
-                        color={star <= selectedFair.rating ? '#FFD700' : '#E0E0E0'}
-                      />
-                    ))}
-                  </View>
-                  <Text style={styles.ratingText}>
-                    {selectedFair.rating} ({selectedFair.reviews} reseñas)
-                  </Text>
-                </View>
-                
                 <Text style={styles.description}>{selectedFair.description}</Text>
-                <Text style={styles.schedule}>📅 {selectedFair.schedule}</Text>
-                
-                <View style={styles.productsContainer}>
-                  <Text style={styles.productsTitle}>Productos disponibles:</Text>
-                  <View style={styles.productTags}>
-                    {selectedFair.products.map((product, index) => (
-                      <View key={index} style={styles.productTag}>
-                        <Text style={styles.productTagText}>{product}</Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-                
+                <Text style={styles.schedule}>Dirección: {selectedFair.address}</Text>
+                <Text style={styles.schedule}>Inicio: {formatDate(selectedFair.startDate)}</Text>
+                <Text style={styles.schedule}>Término: {formatDate(selectedFair.endDate)}</Text>
+                <Text style={styles.schedule}>Lat: {selectedFair.coordinate?.latitude ?? selectedFair.latitude} | Lng: {selectedFair.coordinate?.longitude ?? selectedFair.longitude}</Text>
                 <View style={styles.modalActions}>
                   <TouchableOpacity 
                     style={styles.actionButton}
@@ -125,11 +107,6 @@ const MapScreen = ({ navigation }) => {
                     <Icon name="info" size={20} color="white" />
                     <Text style={styles.actionButtonText}>Ver Detalles</Text>
                   </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.actionButtonSecondary}>
-                    <Icon name="directions" size={20} color="#4CAF50" />
-                    <Text style={styles.actionButtonSecondaryText}>Cómo llegar</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
@@ -138,6 +115,26 @@ const MapScreen = ({ navigation }) => {
       </View>
     </Modal>
   );
+
+  // Función para centrar el mapa en la ubicación actual
+  const centerOnUserLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permiso denegado para acceder a la ubicación');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    } catch (err) {
+      alert('No se pudo obtener la ubicación');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -173,6 +170,9 @@ const MapScreen = ({ navigation }) => {
       </View>
       
       {renderFairModal()}
+      <TouchableOpacity style={styles.fabLocation} onPress={centerOnUserLocation}>
+        <Icon name="my-location" size={28} color="#4CAF50" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -341,6 +341,22 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     fontWeight: '600',
     marginLeft: 4,
+  },
+  fabLocation: {
+    position: 'absolute',
+    bottom: 90,
+    left: 24,
+    backgroundColor: 'white',
+    borderRadius: 32,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 8,
   },
 });
 

@@ -43,8 +43,9 @@ const FairDetailScreen = ({ route, navigation }) => {
     },
   ]);
 
+  // Renderizar estrellas para valoración
   const renderStars = (rating, onPress = null) => (
-    <View style={styles.starsContainer}>
+    <View style={{ flexDirection: 'row', marginBottom: 8 }}>
       {[1, 2, 3, 4, 5].map((star) => (
         <TouchableOpacity
           key={star}
@@ -53,7 +54,7 @@ const FairDetailScreen = ({ route, navigation }) => {
         >
           <Icon
             name="star"
-            size={20}
+            size={28}
             color={star <= rating ? '#FFD700' : '#E0E0E0'}
           />
         </TouchableOpacity>
@@ -116,6 +117,22 @@ const FairDetailScreen = ({ route, navigation }) => {
           </View>
         </View>
         
+        <View style={styles.ratingInputSection}>
+          <Text style={styles.sectionTitle}>Califica esta feria</Text>
+          {renderStars(userRating, setUserRating)}
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Escribe tu comentario..."
+            value={newComment}
+            onChangeText={setNewComment}
+            multiline
+            numberOfLines={3}
+          />
+          <TouchableOpacity style={styles.submitButton} onPress={() => {/* Aquí iría la lógica para enviar */}}>
+            <Text style={styles.submitButtonText}>Enviar Reseña</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Puedes dejar la sección de comentarios si lo deseas */}
         <View style={styles.commentsSection}>
           <Text style={styles.sectionTitle}>

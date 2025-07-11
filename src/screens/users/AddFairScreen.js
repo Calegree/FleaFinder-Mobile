@@ -8,9 +8,12 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Location from 'expo-location';
 
 const AddFairScreen = ({ navigation }) => {
   const [fairData, setFairData] = useState({
@@ -52,6 +55,24 @@ const AddFairScreen = ({ navigation }) => {
       'Tu feria ha sido registrada exitosamente y está pendiente de aprobación',
       [{ text: 'OK', onPress: () => navigation.goBack() }]
     );
+  };
+
+  // Función para pedir permisos y obtener ubicación actual usando expo-location
+  const getCurrentLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'No se pudo obtener la ubicación');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      setSelectedLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    } catch (err) {
+      Alert.alert('Error', 'No se pudo obtener la ubicación');
+    }
   };
 
   return (
@@ -105,6 +126,10 @@ const AddFairScreen = ({ navigation }) => {
             >
               <Marker coordinate={selectedLocation} />
             </MapView>
+            <TouchableOpacity style={styles.editLocationButton} onPress={getCurrentLocation}>
+              <Icon name="my-location" size={20} color="#4CAF50" />
+              <Text style={styles.editLocationText}>Usar mi ubicación</Text>
+            </TouchableOpacity>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 8}}>
               <Text style={{fontSize: 14}}>Lat: {selectedLocation.latitude.toFixed(5)}</Text>
               <Text style={{fontSize: 14}}>Lng: {selectedLocation.longitude.toFixed(5)}</Text>
