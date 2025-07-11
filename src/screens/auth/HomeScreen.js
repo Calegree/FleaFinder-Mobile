@@ -21,77 +21,50 @@ const HomeScreen = ({ navigation }) => {
       {
         id: 1,
         name: 'Feria Isla Cautín',
+        description: 'Feria semanal con productos artesanales y gastronómicos',
+        address: 'Isla Cautín 1, Temuco, Chile',
+        latitude: -33.4489,
+        longitude: -70.6693,
+        startDate: '2024-01-15T09:00:00',
+        endDate: '2024-01-15T18:00:00',
         image: 'https://via.placeholder.com/300x200',
-        rating: 5.0,
-        reviews: 29,
-        description: 'Excelente feria con gran variedad de productos frescos',
-        user: 'robertogarcia92',
-        likes: 245,
-        comments: 4,
-        location: 'Temuco, Chile',
-        schedule: 'Sábados 8:00 - 18:00'
       },
       {
         id: 2,
         name: 'Mercado Central',
-        image: 'https://via.placeholder.com/300x200',
-        rating: 4.5,
-        reviews: 156,
         description: 'Mercado tradicional con productos locales',
-        user: 'mariaperez',
-        likes: 189,
-        comments: 12,
-        location: 'Santiago, Chile',
-        schedule: 'Lunes a Domingo 7:00 - 20:00'
+        address: 'Santiago Centro, Santiago, Chile',
+        latitude: -33.4372,
+        longitude: -70.6506,
+        startDate: '2024-02-10T08:00:00',
+        endDate: '2024-02-10T17:00:00',
+        image: 'https://via.placeholder.com/300x200',
       }
     ]);
   }, []);
+
+  // Agregar función para formatear fecha
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
 
   const renderFairCard = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
       onPress={() => navigation.navigate('FairDetail', { fair: item })}
     >
-      <View style={styles.cardHeader}>
-        <Image 
-          source={{ uri: 'https://via.placeholder.com/40x40' }} 
-          style={styles.userAvatar} 
-        />
-        <Text style={styles.username}>{item.user}</Text>
-      </View>
-      
       <Image source={{ uri: item.image }} style={styles.fairImage} />
-      
       <View style={styles.cardContent}>
         <Text style={styles.fairName}>{item.name}</Text>
         <Text style={styles.description}>{item.description}</Text>
-        <Text style={styles.location}>{item.location}</Text>
-        <Text style={styles.schedule}>{item.schedule}</Text>
-        
-        <View style={styles.ratingContainer}>
-          <View style={styles.stars}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Icon
-                key={star}
-                name="star"
-                size={16}
-                color={star <= item.rating ? '#FFD700' : '#E0E0E0'}
-              />
-            ))}
-          </View>
-          <Text style={styles.ratingText}>{item.rating} ({item.reviews})</Text>
-        </View>
-        
-        <View style={styles.cardActions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="favorite-border" size={20} color="#666" />
-            <Text style={styles.actionText}>{item.likes}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="comment" size={20} color="#666" />
-            <Text style={styles.actionText}>{item.comments}</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.location}>{item.address}</Text>
+        <Text style={styles.schedule}>Inicio: {formatDate(item.startDate)}</Text>
+        <Text style={styles.schedule}>Término: {formatDate(item.endDate)}</Text>
+        <Text style={styles.schedule}>Lat: {item.latitude} | Lng: {item.longitude}</Text>
       </View>
     </TouchableOpacity>
   );
