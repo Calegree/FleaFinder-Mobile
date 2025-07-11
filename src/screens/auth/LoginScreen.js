@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,18 +18,15 @@ const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState('buyer'); // 'buyer' or 'vendor'
 
+  const { loginMVP } = useContext(AuthContext);
+
   const handleLogin = () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
-    
-    // Simular login exitoso
-    if (userType === 'vendor') {
-      navigation.navigate('VendorNotificationsScreen'); // Navegar directamente a VendorNotificationsScreen
-    } else {
-      navigation.navigate('Home'); // Navegar directamente a HomeScreen
-    }
+    // Solo setear el rol en el contexto, no navegar ni consumir API
+    loginMVP(userType);
   };
 
   return (

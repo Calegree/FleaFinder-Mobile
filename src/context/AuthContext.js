@@ -57,8 +57,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login para MVP: setea usuario y rol sin consumir API
+  const loginMVP = (role) => {
+    setUser({ username: 'demo', role });
+    setToken('fake-token');
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loginMVP }}>
       {children}
     </AuthContext.Provider>
   );

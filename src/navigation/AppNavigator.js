@@ -18,20 +18,19 @@ export default function AppNavigator() {
   const { user } = useContext(AuthContext);
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="MapScreen" component={MapScreen} />
-      <Stack.Screen name="FairDetail" component={FairDetailScreen} />
-      <Stack.Screen name="EditVendorProfileScreen" component={EditVendorProfileScreen} />
-      <Stack.Screen name="VendorNotificationsScreen" component={VendorNotificationsScreen} />
-      <Stack.Screen name="VendorProfileScreen" component={VendorProfileScreen} />
-      <Stack.Screen name="AddFairScreen" component={AddFairScreen} />
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <Stack.Screen 
-        name="VendorTabs" 
-        component={() => <VendorTabNavigator />}
-      />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        user.role === 'vendor' ? (
+          <Stack.Screen name="VendorTabs" component={VendorTabNavigator} />
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} />
+        )
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
