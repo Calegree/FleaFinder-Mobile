@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,21 +10,22 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import api from '../../services/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const VendorProfileScreen = ({ navigation }) => {
+  const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('publications');
-  
-  const [vendorData] = useState({
-    name: 'Jimena Zandria',
-    username: 'jimenazandria2031',
-    rut: '12345678-9',
-    birthday: '1990-05-15',
-    email: 'jimena@email.com',
-    phoneNumber: '+56912345678',
-    avatar: 'https://via.placeholder.com/100x100',
-    // Puedes agregar más campos reales del backend aquí
-    fairs: [], // Si tienes ferias favoritas o propias
-  });
+  const [vendorData, setVendorData] = useState(null);
+
+  useEffect(() => {
+    // Determinar el id según el rol
+    let userId = 7; // vendedor por defecto
+    if (user?.role === 'buyer') userId = 8;
+    api.get(`/users/${userId}`)
+      .then(res => setVendorData(res.data))
+      .catch(err => console.error(err));
+  }, [user]);
 
   const renderPublication = ({ item }) => (
     <View style={styles.publicationCard}>
@@ -70,7 +71,7 @@ const VendorProfileScreen = ({ navigation }) => {
         >
           <Icon name="menu" size={24} color="#4CAF50" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{vendorData.username}</Text>
+        <Text style={styles.headerTitle}>{vendorData?.username || ''}</Text>
         <TouchableOpacity style={styles.settingsButton}>
           <Icon name="settings" size={24} color="#4CAF50" />
         </TouchableOpacity>
@@ -78,13 +79,13 @@ const VendorProfileScreen = ({ navigation }) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
-          <Image source={{ uri: vendorData.avatar }} style={styles.profileAvatar} />
-          <Text style={styles.profileName}>{vendorData.name}</Text>
-          <Text style={styles.profileField}>Usuario: {vendorData.username}</Text>
-          <Text style={styles.profileField}>RUT: {vendorData.rut}</Text>
-          <Text style={styles.profileField}>Fecha de nacimiento: {vendorData.birthday}</Text>
-          <Text style={styles.profileField}>Email: {vendorData.email}</Text>
-          <Text style={styles.profileField}>Teléfono: {vendorData.phoneNumber}</Text>
+          <Image source={{ uri: 'https://via.placeholder.com/100x100' }} style={styles.profileAvatar} />
+          <Text style={styles.profileName}>{vendorData?.name || ''}</Text>
+          <Text style={styles.profileField}>Usuario: {vendorData?.username || ''}</Text>
+          <Text style={styles.profileField}>RUT: {vendorData?.rut || ''}</Text>
+          <Text style={styles.profileField}>Fecha de nacimiento: {vendorData?.birthday || ''}</Text>
+          <Text style={styles.profileField}>Email: {vendorData?.email || ''}</Text>
+          <Text style={styles.profileField}>Teléfono: {vendorData?.phoneNumber || ''}</Text>
           <TouchableOpacity 
             style={styles.editProfileButton}
             onPress={() => navigation.navigate('EditVendorProfile')}
@@ -93,23 +94,22 @@ const VendorProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.statsSection}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{vendorData.fairs.length}</Text>
-            <Text style={styles.statLabel}>Ferias</Text>
+          <View className={"statItem"}>
+            <Text style={styles.statNumber}>{vendorData?.productCount ?? 0}</Text>
+            <Text style={styles.statLabel}>Productos</Text>
+          </View>
+          <View className={"statItem"}>
+            <Text style={styles.statNumber}>{vendorData?.reviewCount ?? 0}</Text>
+            <Text style={styles.statLabel}>Reseñas</Text>
+          </View>
+          <View className={"statItem"}>
+            <Text style={styles.statNumber}>{vendorData?.averageRating ?? 0}</Text>
+            <Text style={styles.statLabel}>Rating</Text>
           </View>
         </View>
         {/* Puedes dejar la sección de ferias, pero si no hay datos muestra un mensaje */}
         <View style={styles.fairsSection}>
-          {vendorData.fairs.length === 0 ? (
-            <Text style={styles.emptyText}>Aquí aparecerán tus ferias registradas</Text>
-          ) : (
-            // Aquí podrías mapear las ferias si las tienes
-            vendorData.fairs.map(fair => (
-              <View key={fair.id} style={styles.fairCard}>
-                <Text>{fair.name}</Text>
-              </View>
-            ))
-          )}
+          <Text style={styles.emptyText}>Aquí aparecerán tus ferias registradas</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
