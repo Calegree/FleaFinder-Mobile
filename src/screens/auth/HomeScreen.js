@@ -10,6 +10,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import feriaImage from '../../../assets/images.jpg';
+import pulgasImage from '../../../assets/pulgas.jpeg';
 
 const HomeScreen = ({ navigation }) => {
   const [fairs, setFairs] = useState([]);
@@ -52,12 +54,12 @@ const HomeScreen = ({ navigation }) => {
     return `${day}-${month}-${year}`;
   }
 
-  const renderFairCard = ({ item }) => (
+  const renderFairCard = ({ item, index }) => (
     <TouchableOpacity 
       style={styles.card}
       onPress={() => navigation.navigate('FairDetail', { fair: item })}
     >
-      <Image source={{ uri: item.image }} style={styles.fairImage} />
+      <Image source={index === 1 ? pulgasImage : feriaImage} style={styles.fairImage} />
       <View style={styles.cardContent}>
         <Text style={styles.fairName}>{item.name}</Text>
         <Text style={styles.description}>{item.description}</Text>
@@ -86,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
       
       <FlatList
         data={fairs}
-        renderItem={renderFairCard}
+        renderItem={(props) => renderFairCard({ ...props, index: props.index })}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}

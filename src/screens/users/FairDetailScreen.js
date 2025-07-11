@@ -10,6 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MapView, { Marker } from 'react-native-maps';
 
 const FairDetailScreen = ({ route, navigation }) => {
   const { fair } = route.params;
@@ -99,6 +100,27 @@ const FairDetailScreen = ({ route, navigation }) => {
         <Text style={styles.description}>{fair.description}</Text>
         
         <View style={styles.infoSection}>
+          {/* Mapa con marcador en la ubicación de la feria */}
+          <View style={{ height: 200, borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+            <MapView
+              style={{ flex: 1 }}
+              initialRegion={{
+                latitude: parseFloat(fair.latitude),
+                longitude: parseFloat(fair.longitude),
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              scrollEnabled={false}
+              zoomEnabled={false}
+            >
+              <Marker
+                coordinate={{
+                  latitude: parseFloat(fair.latitude),
+                  longitude: parseFloat(fair.longitude),
+                }}
+              />
+            </MapView>
+          </View>
           <View style={styles.infoItem}>
             <Icon name="location-on" size={20} color="#4CAF50" />
             <Text style={styles.infoText}>{fair.address}</Text>
