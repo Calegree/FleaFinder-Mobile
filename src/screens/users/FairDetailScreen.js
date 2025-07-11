@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker } from 'react-native-maps';
+import api from '../../services/api';
 
 const FairDetailScreen = ({ route, navigation }) => {
   const { fair } = route.params;
@@ -43,6 +44,27 @@ const FairDetailScreen = ({ route, navigation }) => {
       date: '2 semanas atrás',
     },
   ]);
+
+  const handleSubmitReview = async () => {
+    if (!userRating || !newComment.trim()) {
+      alert('Por favor ingresa una calificación y un comentario.');
+      return;
+    }
+    try {
+      await api.post('/reviews', {
+        rating: userRating,
+        comment: newComment,
+        fairId: fair.id,
+        sellerId: null,
+      });
+      alert('¡Reseña enviada con éxito!');
+      setUserRating(0);
+      setNewComment('');
+    } catch (error) {
+      alert('Error al enviar la reseña. Intenta nuevamente.');
+      console.error(error);
+    }
+  };
 
   // Renderizar estrellas para valoración
   const renderStars = (rating, onPress = null) => (
@@ -150,7 +172,7 @@ const FairDetailScreen = ({ route, navigation }) => {
             multiline
             numberOfLines={3}
           />
-          <TouchableOpacity style={styles.submitButton} onPress={() => {/* Aquí iría la lógica para enviar */}}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmitReview}>
             <Text style={styles.submitButtonText}>Enviar Reseña</Text>
           </TouchableOpacity>
         </View>
