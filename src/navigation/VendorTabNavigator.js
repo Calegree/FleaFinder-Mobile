@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import VendorProfileScreen from '../screens/users/VendorProfileScreen';
 import MapScreen from '../screens/users/MapScreen';
 import VendorNotificationsScreen from '../screens/users/VendorNotificationsScreen';
+import HomeScreen from '../screens/auth/HomeScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,37 +14,30 @@ function VendorTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === 'VendorProfile') {
-            iconName = 'person';
-          } else if (route.name === 'Map') {
-            iconName = 'map';
-          } else if (route.name === 'Notifications') {
-            iconName = 'notifications';
-          }
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: 'gray',
         headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: '#A8E6A1',
+          height: 70,
+          position: 'absolute',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderTopWidth: 0,
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          if (route.name === 'HomeScreen') {
+            return <Icon name="home" size={30} color={focused ? 'black' : 'gray'} />;
+          } else if (route.name === 'Map') {
+            return <Icon name="place" size={30} color={focused ? 'black' : 'gray'} />;
+          } else if (route.name === 'VendorProfile') {
+            return <Icon name="person" size={30} color={focused ? 'black' : 'gray'} />;
+          }
+        },
       })}
     >
-      <Tab.Screen 
-        name="VendorProfile" 
-        component={VendorProfileScreen} 
-        options={{ title: 'Perfil' }} 
-      />
-      <Tab.Screen 
-        name="Map" 
-        component={MapScreen} 
-        options={{ title: 'Mapa' }} 
-      />
-      <Tab.Screen 
-        name="Notifications" 
-        component={VendorNotificationsScreen} 
-        options={{ title: 'Notificaciones' }} 
-      />
+      <Tab.Screen name="HomeScreen" component={HomeScreen} />
+      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="VendorProfile" component={VendorProfileScreen} />
     </Tab.Navigator>
   );
 }

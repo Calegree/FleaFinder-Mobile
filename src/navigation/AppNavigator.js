@@ -11,6 +11,7 @@ import VendorNotificationsScreen from '../screens/users/VendorNotificationsScree
 import VendorProfileScreen from '../screens/users/VendorProfileScreen';
 import AddFairScreen from '../screens/users/AddFairScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
+import CustomTabNavigator from './CustomTabNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +22,9 @@ export default function AppNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
         user.role === 'vendor' ? (
-          <Stack.Screen name="VendorTabs" component={VendorTabNavigator} />
+          <Stack.Screen name="UserTabs" component={CustomTabNavigator} />
         ) : (
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="VendorTabs" component={VendorTabNavigator} />
         )
       ) : (
         <>

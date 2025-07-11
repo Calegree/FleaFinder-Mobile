@@ -64,7 +64,14 @@ export default function CustomTabNavigator() {
       >
         <Tab.Screen name="HomeScreen" component={HomeScreen} />
         <Tab.Screen name="MapScreen" component={MapScreen} />
-        <Tab.Screen name="VendorProfileScreen" component={VendorProfileScreen} />
+        <Tab.Screen name="VendorProfileScreen" component={VendorProfileScreen} 
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Icon name="person" size={30} color={focused ? 'black' : 'gray'} />
+            ),
+            title: 'Perfil',
+          }}
+        />
       </Tab.Navigator>
       <FloatingAddButton />
     </View>
@@ -74,8 +81,8 @@ export default function CustomTabNavigator() {
 const styles = StyleSheet.create({
   fabAbsolute: {
     position: 'absolute',
-    bottom: 35,
-    alignSelf: 'center',
+    right: 24,
+    bottom: 80,
     zIndex: 10,
   },
   fabCircle: {
