@@ -18,6 +18,16 @@ const VendorProfileScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('publications');
   const [vendorData, setVendorData] = useState(null);
 
+  // Formatear fecha a DD-MM-YYYY
+  function formatDateDMY(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   useEffect(() => {
     // Determinar el id según el rol
     let userId = 7; // vendedor por defecto
@@ -64,52 +74,22 @@ const VendorProfileScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.menuButton}
-          onPress={() => navigation.openDrawer?.()}
-        >
-          <Icon name="menu" size={24} color="#4CAF50" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{vendorData?.username || ''}</Text>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Icon name="settings" size={24} color="#4CAF50" />
-        </TouchableOpacity>
-      </View>
-
+      {/* Eliminar header superior con menú y engranaje */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.profileSection}>
+        <View style={styles.profileSectionEnhanced}>
           <Image source={{ uri: 'https://via.placeholder.com/100x100' }} style={styles.profileAvatar} />
           <Text style={styles.profileName}>{vendorData?.name || ''}</Text>
-          <Text style={styles.profileField}>Usuario: {vendorData?.username || ''}</Text>
-          <Text style={styles.profileField}>RUT: {vendorData?.rut || ''}</Text>
-          <Text style={styles.profileField}>Fecha de nacimiento: {vendorData?.birthday || ''}</Text>
-          <Text style={styles.profileField}>Email: {vendorData?.email || ''}</Text>
-          <Text style={styles.profileField}>Teléfono: {vendorData?.phoneNumber || ''}</Text>
+          <View style={styles.profileCard}><Text style={styles.profileFieldLabel}>Usuario:</Text><Text style={styles.profileFieldValue}>{vendorData?.username || ''}</Text></View>
+          <View style={styles.profileCard}><Text style={styles.profileFieldLabel}>RUT:</Text><Text style={styles.profileFieldValue}>{vendorData?.rut || ''}</Text></View>
+          <View style={styles.profileCard}><Text style={styles.profileFieldLabel}>Fecha de nacimiento:</Text><Text style={styles.profileFieldValue}>{formatDateDMY(vendorData?.birthday)}</Text></View>
+          <View style={styles.profileCard}><Text style={styles.profileFieldLabel}>Email:</Text><Text style={styles.profileFieldValue}>{vendorData?.email || ''}</Text></View>
+          <View style={styles.profileCard}><Text style={styles.profileFieldLabel}>Teléfono:</Text><Text style={styles.profileFieldValue}>{vendorData?.phoneNumber || ''}</Text></View>
           <TouchableOpacity 
-            style={styles.editProfileButton}
+            style={[styles.editProfileButton, { marginTop: 32 }]}
             onPress={() => navigation.navigate('EditVendorProfile')}
           >
             <Text style={styles.editProfileText}>Editar perfil</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.statsSection}>
-          <View className={"statItem"}>
-            <Text style={styles.statNumber}>{vendorData?.productCount ?? 0}</Text>
-            <Text style={styles.statLabel}>Productos</Text>
-          </View>
-          <View className={"statItem"}>
-            <Text style={styles.statNumber}>{vendorData?.reviewCount ?? 0}</Text>
-            <Text style={styles.statLabel}>Reseñas</Text>
-          </View>
-          <View className={"statItem"}>
-            <Text style={styles.statNumber}>{vendorData?.averageRating ?? 0}</Text>
-            <Text style={styles.statLabel}>Rating</Text>
-          </View>
-        </View>
-        {/* Puedes dejar la sección de ferias, pero si no hay datos muestra un mensaje */}
-        <View style={styles.fairsSection}>
-          <Text style={styles.emptyText}>Aquí aparecerán tus ferias registradas</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -310,6 +290,37 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
+  },
+  profileSectionEnhanced: {
+    alignItems: 'center',
+    paddingVertical: 32,
+    backgroundColor: '#E8F5E8',
+    marginBottom: 8,
+  },
+  profileCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 6,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  profileFieldLabel: {
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    fontSize: 15,
+  },
+  profileFieldValue: {
+    color: '#333',
+    fontSize: 15,
+    flexShrink: 1,
+    textAlign: 'right',
   },
 });
 
