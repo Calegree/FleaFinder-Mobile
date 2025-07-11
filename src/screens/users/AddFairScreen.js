@@ -15,10 +15,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const AddFairScreen = ({ navigation }) => {
   const [fairData, setFairData] = useState({
     name: '',
-    category: '',
+    description: '',
     address: '',
-    schedule: '',
-    description: ''
+    startDate: '',
+    endDate: '',
   });
 
   const [selectedLocation, setSelectedLocation] = useState({
@@ -33,94 +33,26 @@ const AddFairScreen = ({ navigation }) => {
     longitudeDelta: 0.01,
   });
 
-  const categories = [
-    'Frutas y Verduras',
-    'Carnes y Pescados',
-    'Artesanías',
-    'Ropa y Accesorios',
-    'Comida Preparada',
-    'Productos Orgánicos',
-    'Otros'
-  ];
-
-  const schedules = [
-    'Lunes a Viernes 8:00 - 18:00',
-    'Sábados y Domingos 8:00 - 16:00',
-    'Solo Sábados 8:00 - 18:00',
-    'Solo Domingos 8:00 - 16:00',
-    'Todos los días 8:00 - 20:00'
-  ];
-
   const handleInputChange = (field, value) => {
     setFairData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
-    const { name, category, address, schedule } = fairData;
-    
-    if (!name || !category || !address || !schedule) {
+    const { name, description, address, startDate, endDate } = fairData;
+    const { latitude, longitude } = selectedLocation;
+    if (!name || !description || !address || !startDate || !endDate) {
       Alert.alert('Error', 'Por favor completa todos los campos obligatorios');
       return;
     }
-
+    // Aquí deberías hacer la petición a tu backend con los datos correctos
+    // Ejemplo:
+    // api.post('/fairs', { ...fairData, latitude, longitude })
     Alert.alert(
       'Feria Creada',
       'Tu feria ha sido registrada exitosamente y está pendiente de aprobación',
       [{ text: 'OK', onPress: () => navigation.goBack() }]
     );
   };
-
-  const renderCategoryPicker = () => (
-    <View style={styles.pickerContainer}>
-      <Text style={styles.pickerTitle}>Selecciona una categoría:</Text>
-      {categories.map((cat, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[
-            styles.pickerOption,
-            fairData.category === cat && styles.pickerOptionSelected
-          ]}
-          onPress={() => handleInputChange('category', cat)}
-        >
-          <Text style={[
-            styles.pickerOptionText,
-            fairData.category === cat && styles.pickerOptionTextSelected
-          ]}>
-            {cat}
-          </Text>
-          {fairData.category === cat && (
-            <Icon name="check" size={20} color="#4CAF50" />
-          )}
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-
-  const renderSchedulePicker = () => (
-    <View style={styles.pickerContainer}>
-      <Text style={styles.pickerTitle}>Selecciona un horario:</Text>
-      {schedules.map((sched, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[
-            styles.pickerOption,
-            fairData.schedule === sched && styles.pickerOptionSelected
-          ]}
-          onPress={() => handleInputChange('schedule', sched)}
-        >
-          <Text style={[
-            styles.pickerOptionText,
-            fairData.schedule === sched && styles.pickerOptionTextSelected
-          ]}>
-            {sched}
-          </Text>
-          {fairData.schedule === sched && (
-            <Icon name="check" size={20} color="#4CAF50" />
-          )}
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,8 +70,7 @@ const AddFairScreen = ({ navigation }) => {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            Por favor, completa la información de la feria. Si esta ubicación ya está agregada con éxito, esta 
-            operación no será posible.
+            Por favor, completa la información de la feria.
           </Text>
         </View>
 
@@ -157,25 +88,7 @@ const AddFairScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              Categoría (obligatorio)*
-            </Text>
-            <TouchableOpacity style={styles.selectInput}>
-              <Text style={[
-                styles.selectText,
-                !fairData.category && styles.selectPlaceholder
-              ]}>
-                {fairData.category || 'Seleccionar categoría'}
-              </Text>
-              <Icon name="keyboard-arrow-down" size={24} color="#666" />
-            </TouchableOpacity>
-            {fairData.category && renderCategoryPicker()}
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              Dirección (obligatorio)*
-            </Text>
+            <Text style={styles.label}>Dirección (obligatorio)*</Text>
             <TextInput
               style={styles.input}
               value={fairData.address}
@@ -192,32 +105,34 @@ const AddFairScreen = ({ navigation }) => {
             >
               <Marker coordinate={selectedLocation} />
             </MapView>
-            <TouchableOpacity style={styles.editLocationButton}>
-              <Icon name="edit-location" size={16} color="#4CAF50" />
-              <Text style={styles.editLocationText}>
-                Editar dirección en el mapa
-              </Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 8}}>
+              <Text style={{fontSize: 14}}>Lat: {selectedLocation.latitude.toFixed(5)}</Text>
+              <Text style={{fontSize: 14}}>Lng: {selectedLocation.longitude.toFixed(5)}</Text>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              Horarios (obligatorio)*
-            </Text>
-            <TouchableOpacity style={styles.selectInput}>
-              <Text style={[
-                styles.selectText,
-                !fairData.schedule && styles.selectPlaceholder
-              ]}>
-                {fairData.schedule || 'Seleccionar horario'}
-              </Text>
-              <Icon name="keyboard-arrow-down" size={24} color="#666" />
-            </TouchableOpacity>
-            {fairData.schedule && renderSchedulePicker()}
+            <Text style={styles.label}>Fecha y hora de inicio (obligatorio)*</Text>
+            <TextInput
+              style={styles.input}
+              value={fairData.startDate}
+              onChangeText={(text) => handleInputChange('startDate', text)}
+              placeholder="Ej: 09:00"
+            />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Descripción adicional</Text>
+            <Text style={styles.label}>Fecha y hora de término (obligatorio)*</Text>
+            <TextInput
+              style={styles.input}
+              value={fairData.endDate}
+              onChangeText={(text) => handleInputChange('endDate', text)}
+              placeholder="Ej: 18:00"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Descripción (obligatorio)*</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
               value={fairData.description}
@@ -233,7 +148,7 @@ const AddFairScreen = ({ navigation }) => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Publicar reseña</Text>
+          <Text style={styles.submitButtonText}>Crear feria</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

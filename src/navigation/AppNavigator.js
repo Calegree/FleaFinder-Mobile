@@ -32,6 +32,7 @@ export default function AppNavigator() {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
       )}
+      <Stack.Screen name="AddFairScreen" component={AddFairScreen} />
     </Stack.Navigator>
   );
 }
