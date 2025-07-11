@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,33 +17,13 @@ const FairDetailScreen = ({ route, navigation }) => {
   const { fair } = route.params;
   const [newComment, setNewComment] = useState('');
   const [userRating, setUserRating] = useState(0);
-  
-  const [comments] = useState([
-    {
-      id: 1,
-      user: 'Carlos Mendoza',
-      avatar: 'https://via.placeholder.com/40x40',
-      rating: 5,
-      comment: 'Excelente feria, productos frescos y buenos precios',
-      date: '2 días atrás',
-    },
-    {
-      id: 2,
-      user: 'Ana García',
-      avatar: 'https://via.placeholder.com/40x40',
-      rating: 4,
-      comment: 'Muy buena variedad, aunque a veces está muy lleno',
-      date: '1 semana atrás',
-    },
-    {
-      id: 3,
-      user: 'Pedro Silva',
-      avatar: 'https://via.placeholder.com/40x40',
-      rating: 5,
-      comment: 'Los vendedores son muy amables y los productos de calidad',
-      date: '2 semanas atrás',
-    },
-  ]);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    api.get(`/reviews/fair/${fair.id}`)
+      .then(res => setComments(res.data))
+      .catch(err => console.error(err));
+  }, [fair.id]);
 
   const handleSubmitReview = async () => {
     if (!userRating || !newComment.trim()) {
@@ -88,12 +68,12 @@ const FairDetailScreen = ({ route, navigation }) => {
   const renderComment = ({ item }) => (
     <View style={styles.commentCard}>
       <View style={styles.commentHeader}>
-        <Image source={{ uri: item.avatar }} style={styles.commentAvatar} />
+        <Image source={{ uri: 'https://via.placeholder.com/40x40' }} style={styles.commentAvatar} />
         <View style={styles.commentUserInfo}>
-          <Text style={styles.commentUser}>{item.user}</Text>
+          <Text style={styles.commentUser}>{item.reviewerName || 'Usuario'}</Text>
           <View style={styles.commentRating}>
             {renderStars(item.rating)}
-            <Text style={styles.commentDate}>{item.date}</Text>
+            <Text style={styles.commentDate}>{formatDate(item.createdAt)}</Text>
           </View>
         </View>
       </View>
