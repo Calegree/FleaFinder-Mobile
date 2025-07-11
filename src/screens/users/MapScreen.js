@@ -11,6 +11,7 @@ import {
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Location from 'expo-location';
+import api from '../../services/api';
 
 const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState({
@@ -22,37 +23,13 @@ const MapScreen = ({ navigation }) => {
   
   const [selectedFair, setSelectedFair] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [fairs, setFairs] = useState([]);
 
-  const fairs = [
-    {
-      id: 1,
-      name: 'Feria Isla Cautín',
-      coordinate: {
-        latitude: -38.7359,
-        longitude: -72.5904,
-      },
-      rating: 5.0,
-      reviews: 29,
-      image: 'https://via.placeholder.com/300x200',
-      description: 'Excelente feria con gran variedad de productos frescos',
-      schedule: 'Sábados 8:00 - 18:00',
-      products: ['Frutas', 'Verduras', 'Carnes'],
-    },
-    {
-      id: 2,
-      name: 'Mercado Central',
-      coordinate: {
-        latitude: -38.7459,
-        longitude: -72.6004,
-      },
-      rating: 4.5,
-      reviews: 156,
-      image: 'https://via.placeholder.com/300x200',
-      description: 'Mercado tradicional con productos locales',
-      schedule: 'Lunes a Domingo 7:00 - 20:00',
-      products: ['Mariscos', 'Frutas', 'Artesanías'],
-    },
-  ];
+  useEffect(() => {
+    api.get('/fairs')
+      .then(response => setFairs(response.data))
+      .catch(error => console.error(error));
+  }, []);
 
   const openFairModal = (fair) => {
     setSelectedFair(fair);
@@ -86,7 +63,7 @@ const MapScreen = ({ navigation }) => {
           {selectedFair && (
             <ScrollView>
               <Image 
-                source={{ uri: selectedFair.image }} 
+                source={{ uri: selectedFair.image || 'https://via.placeholder.com/300x200' }} 
                 style={styles.modalImage} 
               />
               <View style={styles.modalInfo}>
@@ -95,7 +72,7 @@ const MapScreen = ({ navigation }) => {
                 <Text style={styles.schedule}>Dirección: {selectedFair.address}</Text>
                 <Text style={styles.schedule}>Inicio: {formatDate(selectedFair.startDate)}</Text>
                 <Text style={styles.schedule}>Término: {formatDate(selectedFair.endDate)}</Text>
-                <Text style={styles.schedule}>Lat: {selectedFair.coordinate?.latitude ?? selectedFair.latitude} | Lng: {selectedFair.coordinate?.longitude ?? selectedFair.longitude}</Text>
+                <Text style={styles.schedule}>Lat: {selectedFair.latitude} | Lng: {selectedFair.longitude}</Text>
                 <View style={styles.modalActions}>
                   <TouchableOpacity 
                     style={styles.actionButton}
@@ -146,7 +123,10 @@ const MapScreen = ({ navigation }) => {
         {fairs.map((fair) => (
           <Marker
             key={fair.id}
-            coordinate={fair.coordinate}
+            coordinate={{
+              latitude: parseFloat(fair.latitude),
+              longitude: parseFloat(fair.longitude),
+            }}
             onPress={() => openFairModal(fair)}
           >
             <View style={styles.markerContainer}>
@@ -155,7 +135,7 @@ const MapScreen = ({ navigation }) => {
             <Callout>
               <View style={styles.calloutContainer}>
                 <Text style={styles.calloutTitle}>{fair.name}</Text>
-                <Text style={styles.calloutRating}>⭐ {fair.rating}</Text>
+                <Text style={styles.calloutRating}>⭐ {fair.averageRating ?? 0}</Text>
               </View>
             </Callout>
           </Marker>
