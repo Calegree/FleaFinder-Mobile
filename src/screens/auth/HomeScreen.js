@@ -12,37 +12,19 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import feriaImage from '../../../assets/images.jpg';
 import pulgasImage from '../../../assets/pulgas.jpeg';
+import api from '../../services/api';
 
 const HomeScreen = ({ navigation }) => {
   const [fairs, setFairs] = useState([]);
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    // Simular datos de ferias
-    setFairs([
-      {
-        id: 1,
-        name: 'Feria Isla Cautín',
-        description: 'Feria semanal con productos artesanales y gastronómicos',
-        address: 'Isla Cautín 1, Temuco, Chile',
-        latitude: -33.4489,
-        longitude: -70.6693,
-        startDate: '2024-01-15T09:00:00',
-        endDate: '2024-01-15T18:00:00',
-        image: 'https://via.placeholder.com/300x200',
-      },
-      {
-        id: 2,
-        name: 'Mercado Central',
-        description: 'Mercado tradicional con productos locales',
-        address: 'Santiago Centro, Santiago, Chile',
-        latitude: -33.4372,
-        longitude: -70.6506,
-        startDate: '2024-02-10T08:00:00',
-        endDate: '2024-02-10T17:00:00',
-        image: 'https://via.placeholder.com/300x200',
-      }
-    ]);
+    api.get('/fairs')
+      .then(response => setFairs(response.data))
+      .catch(error => {
+        // Puedes mostrar un mensaje de error si quieres
+        console.error(error);
+      });
   }, []);
 
   // Agregar función para formatear fecha
