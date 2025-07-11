@@ -142,12 +142,7 @@ const MapScreen = ({ navigation }) => {
         ))}
       </MapView>
       
-      <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton}>
-          <Icon name="filter-list" size={20} color="#4CAF50" />
-          <Text style={styles.filterText}>Filtros</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Eliminar el botón de filtros */}
       
       {renderFairModal()}
       <TouchableOpacity style={styles.fabLocation} onPress={centerOnUserLocation}>
