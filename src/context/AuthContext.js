@@ -9,18 +9,20 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (loginData) => {
     try {
-      const res = await fetch('http://TU_BACKEND_URL/auth/login', {
+      const res = await fetch('http://localhost:8080/auth/log-in', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginData)
       });
+      console.log('vengaa', loginData);
       const data = await res.json();
-
+      console.log('data', data);
       if (data.jwt) {
         setToken(data.jwt);
-        setUser({ username: data.username }); // puedes extender esto si extraes el rol
+        setUser({ username: data.username, role:data.role }); // puedes extender esto si extraes el rol
         await AsyncStorage.setItem('token', data.jwt);
       }
+      console.log('Login successful:', data);
     } catch (error) {
       console.error('Login error:', error);
     }
