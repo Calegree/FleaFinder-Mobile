@@ -31,7 +31,7 @@ public class FairController {
             @RequestParam Double longitude,
             @RequestParam(defaultValue = "10.0") Double radius,
             Authentication authentication) {
-        List<FairDTO> fairs = fairService.getNearbyFairs(latitude, longitude, radius, authentication);
+        List<FairDTO> fairs = fairService.getNearbyFairs(latitude, longitude, radius);
         return ResponseEntity.ok(fairs);
     }
 

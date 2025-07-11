@@ -35,11 +35,17 @@ public class AdminController {
     @PutMapping("/reviews/{id}/resolve-report")
     public ResponseEntity<Void> resolveReportedReview(@PathVariable Long id, @RequestParam Boolean removeReview, Authentication authentication) {
         if (removeReview) {
-            reviewService.deleteReview(id, authentication);
+            reviewService.deleteReview(id);
         }
         else {
             reviewService.unreportReview(id);
         }
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id, Authentication authentication) {
+        reviewService.deleteReview(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -27,7 +27,6 @@ public class FairService {
     public List<FairDTO> getAllActiveFairs() {
         List<FairEntity> fairs = fairRepository.findByIsActiveTrue();
         return fairs.stream()
-                .filter(FairEntity::getIsValidated)
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

@@ -52,17 +52,17 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(review);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/reviews/{id}")
 
     public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody CreateReviewRequest request, Authentication authentication) {
-        ReviewDTO review = reviewService.updateReview(id, request, authentication);
+        ReviewDTO review = reviewService.updateReview(id, request);
         return ResponseEntity.ok(review);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/reviews/{id}")
 
     public ResponseEntity<Void> deleteReview(@PathVariable Long id, Authentication authentication) {
-        reviewService.deleteReview(id, authentication);
+        reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }
 

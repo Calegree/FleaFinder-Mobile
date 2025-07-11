@@ -51,24 +51,21 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
-    @PutMapping("/{id}")
-
+    @PutMapping("/products/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody CreateProductRequest request, Authentication authentication) {
-        ProductDTO product = productService.updateProduct(id, request, authentication);
+        ProductDTO product = productService.updateProduct(id, request);
         return ResponseEntity.ok(product);
     }
 
-    @DeleteMapping("/{id}")
-
+    @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id, Authentication authentication) {
-        productService.deleteProduct(id, authentication);
+        productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/toggle-availability")
-
+    @PatchMapping("/products/{id}/toggle-availability")
     public ResponseEntity<ProductDTO> toggleAvailability(@PathVariable Long id, Authentication authentication) {
-        ProductDTO product = productService.toggleAvailability(id, authentication);
+        ProductDTO product = productService.toggleAvailability(id);
         return ResponseEntity.ok(product);
     }
 }
